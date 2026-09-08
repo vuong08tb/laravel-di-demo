@@ -1,0 +1,46 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: di_demo_app
+        restart: unless-stopped
+        working_dir: /var/www
+        environment:
+            TZ: Asia/Ho_Chi_Minh
+        ports:
+            - "8001:8000"
+        volumes:
+            - .:/var/www
+            - /var/www/vendor
+        depends_on:
+            db:
+                condition: service_healthy
+        command: php artisan serve --host=0.0.0.0 --port=8000
+
+    db:
+        image: postgres:16
+        container_name: di_demo_db
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: di_demo_db
+            POSTGRES_USER: di_demo_user
+            POSTGRES_PASSWORD: secret
+            TZ: UTC
+            PGTZ: UTC
+        command: >
+            postgres
+            -c timezone=UTC
+            -c log_timezone=UTC
+        ports:
+            - "5435:5432"
+        volumes:
+            - di_demo_postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U di_demo_user -d di_demo_db"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+volumes:
+    di_demo_postgres_data:
