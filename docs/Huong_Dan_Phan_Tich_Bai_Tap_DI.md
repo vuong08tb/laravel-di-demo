@@ -33,9 +33,9 @@ Tài liệu gốc được viết cho **Laravel 10.x/11.x**, còn project đang 
 
 ### Checklist khởi động
 
-- [ ] `docker compose up -d` và kiểm tra `docker ps` thấy cả 2 container `Up`
-- [ ] Mở http://localhost:8001 thấy trang chào mừng Laravel (status 200)
-- [ ] `docker exec di_demo_app php artisan migrate:status` không báo lỗi
+- [x] `docker compose up -d` và kiểm tra `docker ps` thấy cả 2 container `Up`
+- [x] Mở http://localhost:8001 thấy trang chào mừng Laravel (status 200)
+- [x] `docker exec di_demo_app php artisan migrate:status` không báo lỗi
 
 ---
 
@@ -92,8 +92,8 @@ curl http://localhost:8001/users
 ```
 Kỳ vọng: JSON chứa 2 user. Nếu thấy lỗi `Target class [...] does not exist` → sai namespace hoặc thiếu `use`.
 
-- [ ] `/users` trả về JSON đúng 2 phần tử
-- [ ] `AppServiceProvider::register()` vẫn **rỗng** (đây là điểm mấu chốt của bài này)
+- [x] `/users` trả về JSON đúng 2 phần tử
+- [x] `AppServiceProvider::register()` vẫn **rỗng** (đây là điểm mấu chốt của bài này)
 
 ---
 
