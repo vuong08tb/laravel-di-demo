@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
@@ -17,5 +20,12 @@ class UserController extends Controller
         $users = $this->userService->getAllUsers();
 
         return response()->json($users);
+    }
+
+    public function store(StoreUserRequest $request): JsonResponse
+    {
+        $user = User::create($request->validated());
+
+        return response()->json($user, 201);
     }
 }

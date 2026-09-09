@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/send-notification', [NotificationController::class, 'sendNotification']);
+Route::get('/users', [UserController::class, 'index']);
+Route::post('/users', [UserController::class, 'store']);

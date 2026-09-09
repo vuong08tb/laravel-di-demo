@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+
 class UserService
 {
     /**
      * Get the user list
      */
-    public function getAllUsers(): array
+    public function getAllUsers(): Collection
     {
-        return [
-            ['id' => 1, 'name' => 'Nguyen Van A', 'email' => 'a@gmail.com'],
-            ['id' => 2, 'name' => 'Tran Thi B', 'email' => 'b@gmail.com'],
-        ];
+        // TODO: dùng model User, sắp xếp theo cột 'name', lấy tất cả
+        return User::orderBy('name')->get();
     }
 }

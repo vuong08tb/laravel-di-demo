@@ -42,6 +42,12 @@ class User extends Authenticatable
 
 **3. Route bài DI là `/order`**, không phải `/checkout` như một số tài liệu ghi.
 
+**4. `UserController` nay nằm trong `routes/api.php`**, nên URL thật có tiền tố `/api`: `GET /api/users`, `POST /api/users`. Route khai trong `routes/api.php` **luôn được Laravel tự thêm `/api`** — viết `Route::post('/users', ...)` sẽ ra `/api/users`, không phải `/users`. Gọi sai sẽ nhận **405 Method Not Allowed**. Muốn biết URL thật, luôn xem cột đầu của:
+
+```bash
+docker exec di_demo_app php artisan route:list --path=users
+```
+
 ### 🔭 Telescope — công cụ chính của bộ bài này
 
 Project đã cài sẵn **Laravel Telescope**, mở tại **http://localhost:8001/telescope**. Đây là thứ bạn sẽ dùng để *nhìn thấy* điều đang xảy ra bên dưới, thay vì đoán.
@@ -80,11 +86,11 @@ docker exec di_demo_app php artisan telescope:clear
 
 ### Checklist khởi động
 
-- [ ] `docker compose up -d` — cả 2 container `Up`
-- [ ] `docker exec di_demo_app php artisan migrate:status` — không lỗi
-- [ ] `docker exec di_demo_app php artisan test` — suite hiện tại xanh
-- [ ] `curl http://localhost:8001/users` — trả về 2 user **giả lập** (chính là thứ ta sắp thay)
-- [ ] Mở http://localhost:8001/telescope — thấy giao diện Telescope, tab **Requests** có dữ liệu
+- [x] `docker compose up -d` — cả 2 container `Up`
+- [x] `docker exec di_demo_app php artisan migrate:status` — không lỗi
+- [x] `docker exec di_demo_app php artisan test` — suite hiện tại xanh
+- [x] `curl http://localhost:8001/api/users` — trả về 2 user **giả lập** (chính là thứ ta sắp thay)
+- [x] Mở http://localhost:8001/telescope — thấy giao diện Telescope, tab **Requests** có dữ liệu
 
 ---
 
@@ -149,10 +155,10 @@ docker exec di_demo_app php artisan migrate:fresh --seed
 
 ### Cách kiểm chứng
 
-- [ ] `curl http://localhost:8001/users` trả về **11 user** (10 factory + 1 Test User), không còn "Nguyen Van A"
-- [ ] Số bản ghi khớp: `docker exec di_demo_db psql -U di_demo_user -d di_demo_db -t -c "select count(*) from users;"`
-- [ ] `UserController.php` **không bị sửa dòng nào** — kiểm tra bằng `git diff app/Http/Controllers/UserController.php`
-- [ ] JSON trả về **không chứa** `password` và `remember_token`
+- [x] `curl http://localhost:8001/api/users` trả về **11 user** (10 factory + 1 Test User), không còn "Nguyen Van A"
+- [x] Số bản ghi khớp: `docker exec di_demo_db psql -U di_demo_user -d di_demo_db -t -c "select count(*) from users;"`
+- [x] `UserController.php` **không bị sửa dòng nào** — kiểm tra bằng `git diff app/Http/Controllers/UserController.php`
+- [x] JSON trả về **không chứa** `password` và `remember_token`
 
 > 💡 **Câu hỏi tự vấn**: vì sao `password` không lộ ra JSON dù bạn không hề lọc nó ở service hay controller? Gợi ý: đọc lại attribute `#[Hidden]` trên model `User`. Nếu bỏ attribute đó đi thì sao?
 
@@ -165,7 +171,7 @@ docker exec di_demo_app php artisan migrate:fresh --seed
 **📝 Yêu cầu:**
 
 - Tạo `App\Http\Requests\StoreUserRequest` bằng `artisan make:request`.
-- Thêm route `POST /users` gọi `UserController@store`.
+- Thêm route `POST /users` vào **`routes/api.php`** (URL thật sẽ là `/api/users`) gọi `UserController@store`.
 - Controller nhận thẳng `StoreUserRequest` thay cho `Request` — container tự động validate **trước khi** thân hàm chạy.
 
 **💻 Mã nguồn gợi ý ban đầu:**
@@ -209,13 +215,13 @@ public function store(StoreUserRequest $request): JsonResponse
 
 ### Cách kiểm chứng
 
-- [ ] Gửi request thiếu field → HTTP **422**, body chứa danh sách lỗi theo từng field
-- [ ] Gửi email đã tồn tại → 422 với message về `email`
-- [ ] Gửi dữ liệu hợp lệ → HTTP **201**, bản ghi mới nằm trong DB
-- [ ] Thân hàm `store()` **không có dòng `if` kiểm tra nào**
+- [x] Gửi request thiếu field → HTTP **422**, body chứa danh sách lỗi theo từng field
+- [x] Gửi email đã tồn tại → 422 với message về `email`
+- [x] Gửi dữ liệu hợp lệ → HTTP **201**, bản ghi mới nằm trong DB
+- [x] Thân hàm `store()` **không có dòng `if` kiểm tra nào**
 
 ```bash
-curl -s -X POST http://localhost:8001/users \
+curl -s -X POST http://localhost:8001/api/users \
   -H "Accept: application/json" -H "Content-Type: application/json" \
   -d '{"name":"","email":"sai-dinh-dang"}' | head -c 300
 ```
@@ -233,7 +239,7 @@ curl -s -X POST http://localhost:8001/users \
 - Tạo bảng `posts` với khóa ngoại `user_id`.
 - Model `Post` với `belongsTo(User::class)`, model `User` thêm `hasMany(Post::class)`.
 - Tạo `PostFactory`, seed mỗi user 5 bài viết.
-- Thêm route `/users-with-posts` trả về mỗi user kèm danh sách bài viết.
+- Thêm route `/users-with-posts` vào `routes/api.php` trả về mỗi user kèm danh sách bài viết.
 - **Đếm số câu query** trước và sau khi tối ưu.
 
 **💻 Mã nguồn gợi ý ban đầu:**
@@ -303,10 +309,10 @@ Bước 2, **đo số query bằng Telescope**:
 # xoá sạch dữ liệu cũ để đếm cho gọn
 docker exec di_demo_app php artisan telescope:clear
 
-curl -s http://localhost:8001/users-with-posts > /dev/null
+curl -s http://localhost:8001/api/users-with-posts > /dev/null
 ```
 
-Mở http://localhost:8001/telescope/requests → bấm vào request `/users-with-posts` vừa xuất hiện → kéo xuống mục **Queries**.
+Mở http://localhost:8001/telescope/requests → bấm vào request `/api/users-with-posts` vừa xuất hiện → kéo xuống mục **Queries**.
 
 Bạn sẽ thấy **cùng một câu SQL lặp lại rất nhiều lần**, chỉ khác giá trị `user_id`:
 
@@ -416,14 +422,14 @@ class UserApiTest extends TestCase
         // TODO: tạo sẵn 3 user bằng factory
         ____;
 
-        $this->getJson('/users')
+        $this->getJson('/api/users')
             ->assertStatus(200)
             ->assertJsonCount(____, 'data');
     }
 
     public function test_it_creates_a_user(): void
     {
-        $this->postJson('/users', [
+        $this->postJson('/api/users', [
             'name' => 'Nguyen Van A',
             'email' => 'a@gmail.com',
             'password' => 'password123',
@@ -438,7 +444,7 @@ class UserApiTest extends TestCase
     {
         User::factory()->create(['email' => 'trung@gmail.com']);
 
-        $this->postJson('/users', [/* ... email trùng ... */])
+        $this->postJson('/api/users', [/* ... email trùng ... */])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['email']);
     }
@@ -466,7 +472,7 @@ class UserApiTest extends TestCase
 
 ### Cách kiểm chứng
 
-- [ ] Request `POST /users` trả về ngay, không đợi job chạy xong
+- [ ] Request `POST /api/users` trả về ngay, không đợi job chạy xong
 - [ ] Bản ghi xuất hiện trong bảng `jobs` khi chưa có worker
 - [ ] Test dùng `Queue::fake()` chạy nhanh và không đụng bảng `jobs`
 
@@ -488,7 +494,7 @@ class UserApiTest extends TestCase
 
 ## PHẦN IV: CHECKLIST TỔNG KẾT
 
-- [ ] **Bài 1** — `/users` đọc từ DB thật, `UserController` không sửa dòng nào
+- [ ] **Bài 1** — `/api/users` đọc từ DB thật, `UserController` không sửa dòng nào
 - [ ] **Bài 2** — validation nằm trong Form Request, controller sạch `if`
 - [ ] **Bài 3** — đo được **12 query → 2 query**, và giải thích được vì sao ⭐
 - [ ] **Bài 4** — Resource kiểm soát output, không làm tăng số query

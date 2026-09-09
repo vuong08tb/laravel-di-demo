@@ -88,11 +88,11 @@ Route::get('/users', [UserController::class, 'index']);
 ### Cách kiểm chứng
 
 ```bash
-curl http://localhost:8001/users
+curl http://localhost:8001/api/users
 ```
 Kỳ vọng: JSON chứa 2 user. Nếu thấy lỗi `Target class [...] does not exist` → sai namespace hoặc thiếu `use`.
 
-- [x] `/users` trả về JSON đúng 2 phần tử
+- [x] `/users` trả về JSON đúng 2 phần tử *(route sau đã chuyển sang `/api/users`)*
 - [x] `AppServiceProvider::register()` vẫn **rỗng** (đây là điểm mấu chốt của bài này)
 
 ---
@@ -310,7 +310,7 @@ Hai phép thử ngược này quan trọng: một test luôn xanh bất kể cod
 
 ## 7. Checklist tổng kết cuối ngày
 
-- [ ] **Bài 1** — `/users` trả JSON, `AppServiceProvider` vẫn rỗng
+- [ ] **Bài 1** — `/api/users` trả JSON, `AppServiceProvider` vẫn rỗng
 - [ ] **Bài 2** — đổi Stripe ↔ PayPal chỉ bằng 1 dòng, controller không đổi
 - [ ] **Bài 3** — 2 controller, 2 driver khác nhau, cùng 1 interface
 - [ ] **Bài 4** — test PASS, và FAIL đúng như mong đợi khi cố tình phá expectation
