@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use  Illuminate\Http\Request;
 use App\Services\UserService;
 
 class UserController extends Controller
@@ -12,9 +11,11 @@ class UserController extends Controller
     {
         //
     }
+
     public function index()
     {
         $users = $this->userService->getAllUsers();
+
         return response()->json($users);
     }
 }

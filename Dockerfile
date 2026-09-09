@@ -31,6 +31,14 @@ COPY . .
 
 RUN composer dump-autoload --optimize
 
+# Chay container bang UID/GID 1000 (trung UID cua user tren host) de file
+# sinh ra trong bind mount thuoc ve host user, khong bi root chiem quyen.
+RUN groupadd -g 1000 app \
+    && useradd -u 1000 -g 1000 -m -s /bin/bash app \
+    && chown -R 1000:1000 /var/www
+
+USER app
+
 EXPOSE 8000
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

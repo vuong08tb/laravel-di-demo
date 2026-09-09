@@ -5,6 +5,7 @@ services:
             dockerfile: Dockerfile
         container_name: di_demo_app
         restart: unless-stopped
+        user: "1000:1000"
         working_dir: /var/www
         environment:
             TZ: Asia/Ho_Chi_Minh

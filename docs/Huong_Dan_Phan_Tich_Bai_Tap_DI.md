@@ -151,9 +151,9 @@ Hãy tự chứng minh bằng cách đổi binding sang `PaypalPaymentGateway::c
 curl http://localhost:8001/checkout
 ```
 
-- [ ] Trả về message của Stripe
-- [ ] Đổi binding sang Paypal → message đổi, **không sửa `OrderController`**
-- [ ] Thử xóa dòng binding đi → gặp lỗi `Target [PaymentGatewayInterface] is not instantiable` (hiểu vì sao)
+- [x] Trả về message của Stripe
+- [x] Đổi binding sang Paypal → message đổi, **không sửa `OrderController`**
+- [x] Thử xóa dòng binding đi → gặp lỗi `Target [PaymentGatewayInterface] is not instantiable` (hiểu vì sao)
 
 ---
 
