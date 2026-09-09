@@ -193,9 +193,9 @@ Cả hai `->give(____)` đều nhận **tên class** dạng `::class`. Chú ý �
 
 ### Cách kiểm chứng
 
-- [ ] Route avatar trả message chứa "cục bộ"
-- [ ] Route video trả message chứa "AWS S3"
-- [ ] Cùng một interface nhưng ra 2 kết quả khác nhau — **đây là điểm cần quan sát**
+- [x] Route avatar trả message chứa "cục bộ"
+- [x] Route video trả message chứa "AWS S3"
+- [x] Cùng một interface nhưng ra 2 kết quả khác nhau — **đây là điểm cần quan sát**
 
 > 💡 **Câu hỏi tự vấn**: nếu vừa có `bind()` toàn cục *vừa* có `when()` cho một controller, cái nào thắng? Hãy thử: thêm `$this->app->bind(StorageDriverInterface::class, LocalStorageDriver::class)` rồi gọi route video. Contextual binding có độ ưu tiên cao hơn.
 
