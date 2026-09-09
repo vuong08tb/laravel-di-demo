@@ -5,7 +5,7 @@ namespace App\Services;
 class UserService
 {
     /**
-     * Get the user list 
+     * Get the user list
      */
     public function getAllUsers(): array
     {
